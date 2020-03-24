@@ -247,6 +247,7 @@ def parse_args():
     parser.add_argument('--input_video', default='AIC20_track1/Dataset_A/cam_1.mp4', help='Path to input video.')
     parser.add_argument('--input_bboxes', default='bboxes/cam_1.mp4.pkl', help='Path to pkl file containing video bboxes.')
     parser.add_argument('--output_video', default='output_video/cam_1.mp4', help='Path to output video.')
+    parser.add_argument('--thresh', default=0.3, help='Bounding box threshold')
     args = parser.parse_args()
     return args
 
@@ -278,6 +279,7 @@ if __name__ == '__main__':
     for frame_idx in tqdm(range(num_frames)):
         success, frame = input_video.read()
         dets = np.concatenate([seq_dets[frame_idx][3], seq_dets[frame_idx][8]], axis=0)
+        dets = dets[dets[:, 4] > args.thresh]
 
         trackers = mot_tracker.update(dets)
         for det in trackers:
