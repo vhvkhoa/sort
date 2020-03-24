@@ -277,13 +277,11 @@ if __name__ == '__main__':
     mot_tracker = Sort() #create instance of the SORT tracker
     for frame_idx in tqdm(range(num_frames)):
         success, frame = input_video.read()
-        print(success)
-        print(frame.shape)
         dets = np.concatenate([seq_dets[frame_idx][3], seq_dets[frame_idx][8]], axis=0)
 
         trackers = mot_tracker.update(dets)
         for det in trackers:
-            cv2.rectangle(frame, (det[0], det[1]), (det[2], det[3]), c, 2)
+            cv2.rectangle(frame, (int(det[0]), int(det[1])), (int(det[2]), int(det[3])), c, 2)
             txt = '{:.2f}'.format(det[4])
             cat_size = cv2.getTextSize(txt, cv2.FONT_HERSHEY_SIMPLEX, 0.5, 2)[0]
             cv2.rectangle(frame,
