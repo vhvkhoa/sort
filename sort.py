@@ -254,7 +254,6 @@ if __name__ == '__main__':
     args = parse_args()
     video_path = args.input_video
     bboxes_path = args.input_bboxes
-    display = args.display
 
     total_time = 0.0
     total_frames = 0
