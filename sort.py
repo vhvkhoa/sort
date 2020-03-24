@@ -272,13 +272,12 @@ if __name__ == '__main__':
         isColor=True
     )
 
-    c = (255 - np.array([0.929, 0.694, 0.125]) * 255).tolist()
+    c = (0, 255, 0)
 
     mot_tracker = Sort() #create instance of the SORT tracker
     for frame_idx in tqdm(range(num_frames)):
         success, frame = input_video.read()
         dets = np.concatenate([seq_dets[frame_idx][3], seq_dets[frame_idx][8]], axis=0)
-        frame = np.array(frame)
 
         trackers = mot_tracker.update(dets)
         for det in trackers:
