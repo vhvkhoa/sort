@@ -281,7 +281,8 @@ if __name__ == '__main__':
 
         trackers = mot_tracker.update(dets)
         for det in trackers:
-            cv2.rectangle(frame, (int(det[0]), int(det[1])), (int(det[2]), int(det[3])), c, 2)
+            det = np.array(det, dtype=np.int32)
+            cv2.rectangle(frame, (det[0], det[1]), (det[2]), det[3]), c, 2)
             txt = '{:.2f}'.format(det[4])
             cat_size = cv2.getTextSize(txt, cv2.FONT_HERSHEY_SIMPLEX, 0.5, 2)[0]
             cv2.rectangle(frame,
