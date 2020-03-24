@@ -273,6 +273,7 @@ if __name__ == '__main__':
     )
 
     c = (255 - np.array([0.929, 0.694, 0.125]) * 255).tolist()
+    print(c)
 
     mot_tracker = Sort() #create instance of the SORT tracker
     for frame_idx in tqdm(range(num_frames)):
