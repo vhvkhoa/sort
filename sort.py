@@ -283,7 +283,7 @@ if __name__ == '__main__':
         height = int(input_video.get(cv2.CAP_PROP_FRAME_HEIGHT))
 
         output_video = cv2.VideoWriter(
-            filename=args.output_video,
+            filename=output_video_path,
             fourcc=cv2.VideoWriter_fourcc(*'mp4v'),
             fps=30.,
             frameSize=(width, height),
@@ -320,3 +320,5 @@ if __name__ == '__main__':
                     thickness=1, lineType=cv2.LINE_AA)
 
             output_video.write(frame)
+        output_video.release()
+        input_video.release()
