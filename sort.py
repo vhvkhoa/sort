@@ -19,7 +19,7 @@ from __future__ import print_function
 
 import glob
 import argparse
-import osp
+import os.path as osp
 import pickle as pkl
 
 from numba import jit
