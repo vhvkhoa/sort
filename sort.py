@@ -291,4 +291,5 @@ if __name__ == '__main__':
             cv2.putText(frame, txt, (det[0], det[1] - 2), 
                 cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 0),
                 thickness=1, lineType=cv2.LINE_AA)
-
+        
+        output_video.write(frame)
