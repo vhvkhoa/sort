@@ -258,7 +258,7 @@ def parse_args():
     """Parse input arguments."""
     parser = argparse.ArgumentParser(description='SORT demo')
     parser.add_argument('--input_dir', default='AIC20_track1/Dataset_A', help='Path to input video.')
-    parser.add_argument('--bboxes_dir', default='bboxes/cam_1.mp4.pkl', help='Path to pkl file containing video bboxes.')
+    parser.add_argument('--bboxes_dir', default='bboxes/', help='Path to pkl file containing video bboxes.')
     parser.add_argument('--output_dir', default='output_videos', help='Path to output video.')
     parser.add_argument('--thresh', default=0.3, help='Bounding box threshold')
     args = parser.parse_args()
@@ -271,7 +271,7 @@ if __name__ == '__main__':
 
     input_videos = glob.glob(osp.join(args.input_dir, '*.mp4'))
     for input_video_path in input_videos:
-        bboxes_path = osp.join(args.bboxes_dir, osp.basename(input_video_path))
+        bboxes_path = osp.join(args.bboxes_dir, osp.basename(input_video_path) + '.pkl')
         output_video_path = osp.join(args.output_dir, osp.basename(input_video_path))
 
         with open(bboxes_path, 'rb') as f:
