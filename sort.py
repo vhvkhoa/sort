@@ -25,6 +25,7 @@ import pickle as pkl
 
 from numba import jit
 import numpy as np
+from tqdm import tqdm
 import matplotlib.pyplot as plt
 import matplotlib.patches as patches
 from skimage import io
@@ -274,7 +275,7 @@ if __name__ == '__main__':
     c = (255 - np.array([0.929, 0.694, 0.125]) * 255).tolist()
 
     mot_tracker = Sort() #create instance of the SORT tracker
-    for frame_idx in range(num_frames):
+    for frame_idx in tqdm(range(num_frames)):
         success, frame = input_video.read()
         dets = np.concatenate([seq_dets[frame_idx][3], seq_dets[frame_idx][8]], axis=0)
 
