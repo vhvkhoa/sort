@@ -289,5 +289,6 @@ if __name__ == '__main__':
                 (det[0], det[1] - cat_size[1] - 2),
                 (det[0] + cat_size[0], det[1] - 2), c, -1)
             cv2.putText(frame, txt, (det[0], det[1] - 2), 
-                font, 0.5, (0, 0, 0), thickness=1, lineType=cv2.LINE_AA)
+                cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 0),
+                thickness=1, lineType=cv2.LINE_AA)
 
