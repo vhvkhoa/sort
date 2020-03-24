@@ -244,7 +244,7 @@ class Sort(object):
 def parse_args():
     """Parse input arguments."""
     parser = argparse.ArgumentParser(description='SORT demo')
-    parser.add_argument('--input_video', default='AIC20_Track1/Dataset_A/cam_1.mp4', help='Path to input video.')
+    parser.add_argument('--input_video', default='AIC20_track1/Dataset_A/cam_1.mp4', help='Path to input video.')
     parser.add_argument('--input_bboxes', default='bboxes/cam_1.mp4.pkl', help='Path to pkl file containing video bboxes.')
     parser.add_argument('--output_video', default='output_video/cam_1.mp4', help='Path to output video.')
     args = parser.parse_args()
