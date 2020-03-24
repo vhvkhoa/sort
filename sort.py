@@ -255,14 +255,6 @@ if __name__ == '__main__':
     video_path = args.input_video
     bboxes_path = args.input_bboxes
 
-    total_time = 0.0
-    total_frames = 0
-    colours = np.random.rand(32,3) #used only for display
-
-    if(display):
-        plt.ion()
-        fig = plt.figure() 
-
     with open(bboxes_path, 'rb') as f:
         seq_dets = pkl.load(f)
   
