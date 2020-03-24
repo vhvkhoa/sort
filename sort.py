@@ -259,9 +259,9 @@ if __name__ == '__main__':
         seq_dets = pkl.load(f)
   
     input_video = cv2.VideoCapture(args.input_video)
-    num_frames = int(video_input.get(cv2.CAP_PROP_FRAME_COUNT))
-    width = int(video_input.get(cv2.CAP_PROP_FRAME_WIDTH))
-    height = int(video_input.get(cv2.CAP_PROP_FRAME_HEIGHT))
+    num_frames = int(input_video.get(cv2.CAP_PROP_FRAME_COUNT))
+    width = int(input_video.get(cv2.CAP_PROP_FRAME_WIDTH))
+    height = int(input_video.get(cv2.CAP_PROP_FRAME_HEIGHT))
 
     output_video = cv2.VideoWriter(
         filename=args.output_video,
