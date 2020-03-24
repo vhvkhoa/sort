@@ -277,7 +277,8 @@ if __name__ == '__main__':
     mot_tracker = Sort() #create instance of the SORT tracker
     for frame_idx in tqdm(range(num_frames)):
         success, frame = input_video.read()
-        print(frame.shape)
+        print(success)
+        print(frame)
         dets = np.concatenate([seq_dets[frame_idx][3], seq_dets[frame_idx][8]], axis=0)
 
         trackers = mot_tracker.update(dets)
