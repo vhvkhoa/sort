@@ -278,7 +278,7 @@ if __name__ == '__main__':
     for frame_idx in tqdm(range(num_frames)):
         success, frame = input_video.read()
         print(success)
-        print(frame)
+        print(frame.shape)
         dets = np.concatenate([seq_dets[frame_idx][3], seq_dets[frame_idx][8]], axis=0)
 
         trackers = mot_tracker.update(dets)
