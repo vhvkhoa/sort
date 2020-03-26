@@ -109,6 +109,7 @@ def main(args):
         max_iou_per_new = np.asarray(ious).max(axis=1).tolist()
         if frame_idx == 0:
             for iou, bbox in zip(max_iou_per_new, frame_bboxes):
+                print(iou)
                 if iou <= args.iou_thresh:
                     tracked_bboxes.append(bbox)
                     start_frame_ids.append(frame_idx)
