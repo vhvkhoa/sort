@@ -107,15 +107,13 @@ def main(args):
             ious = np.zeros((len(frame_bboxes), 1))
 
         max_iou_per_new = np.asarray(ious).max(axis=1).tolist()
-        if frame_idx == 0:
-            for iou, bbox in zip(max_iou_per_new, frame_bboxes):
-                print(iou)
-                if iou <= args.iou_thresh:
-                    tracked_bboxes.append(bbox)
-                    start_frame_ids.append(frame_idx)
-                    trackers.append(cv2.TrackerCSRT_create())
-                    bbox = (bbox[0], bbox[1], bbox[2] - bbox[0], bbox[3] - bbox[1])
-                    trackers[-1].init(frame, bbox)
+        for iou, bbox in zip(max_iou_per_new, frame_bboxes):
+            if iou <= args.iou_thresh:
+                tracked_bboxes.append(bbox)
+                start_frame_ids.append(frame_idx)
+                trackers.append(cv2.TrackerCSRT_create())
+                bbox = (bbox[0], bbox[1], bbox[2] - bbox[0], bbox[3] - bbox[1])
+                trackers[-1].init(frame, bbox)
         print(len(trackers))
 
         for bbox in tracked_bboxes:
