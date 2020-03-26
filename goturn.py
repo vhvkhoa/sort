@@ -27,7 +27,7 @@ def get_args():
     parser.add_argument(
         '--iou-thresh',
         type=float,
-        default=0.6
+        default=0.3
     )
     parser.add_argument(
         '--confidence-thresh',
