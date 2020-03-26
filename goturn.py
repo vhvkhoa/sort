@@ -109,7 +109,7 @@ def main(args):
             for iou, bbox in zip(max_iou_per_new, frame_bboxes):
                 bbox = (bbox[0], bbox[1], bbox[2] - bbox[0], bbox[3] - bbox[1])
                 if iou <= args.iou_thresh:
-                    trackers.append(cv2.TrackerGOTURN_create())
+                    trackers.append(cv2.TrackerCSRT_create())
                     trackers[-1].init(frame, bbox)
                     tracked_bboxes.append(bbox)
                     start_frame_ids.append(frame_idx)
