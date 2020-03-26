@@ -34,6 +34,11 @@ def get_args():
         type=float,
         default=0.3
     )
+    parser.add_argument(
+        '--time-thresh',
+        type=int,
+        default=100
+    )
     return parser.parse_args()
 
 
@@ -65,42 +70,34 @@ def main(args):
 
     trackers = []
     tracked_bboxes = []
-    success, frame = input_video.read()
-    bbox = cv2.selectROI(frame, False)
-    print(bbox)
-    tracker = cv2.TrackerGOTURN_create()
-    tracker.init(frame, bbox)
+    start_frame_ids = []
     for frame_idx in tqdm(range(num_frames)):
         success, frame = input_video.read()
-        success, bbox = tracker.update(frame)
-        if success:
-            frame = draw_bbox(frame, bbox)
-            output_video.write(frame)
-        else:
-            break
-        '''
+
+        # Keep cars and trucks
         frame_bboxes = np.concatenate([
             bboxes[frame_idx][3],
             bboxes[frame_idx][8]],
             axis=0
         ).tolist()
+
+        # Keep bboxes with confidence score more than threshold
         frame_bboxes = [
-            tuple(bbox[:4]) for bbox in frame_bboxes
+            bbox[:4].astype(np.int32) for bbox in frame_bboxes
             if bbox[4] > args.confidence_thresh
         ]
 
+        # Remove bboxes that cannot be tracked or exists over a threshold
         untracked_ids = []
-        for i, tracker in enumerate(trackers):
+        for i, (tracker, start_frame) in enumerate(zip(trackers, start_frame_ids)):
             success, bbox = tracker.update(frame)
-            if success:
+            if success and frame_idx - start_frame < args.time_thresh:
                 tracked_bboxes[i] = bbox
             else:
                 untracked_ids.append(i)
         if len(untracked_ids) > 0:
             for index in untracked_ids[::-1]:
                 del tracked_bboxes[index]
-        if frame_idx > 0 and len(tracked_bboxes) == 0:
-            break
 
         if len(frame_bboxes) > 0 and len(tracked_bboxes) > 0:
             ious = mask_util.iou(np.array(frame_bboxes), np.array(tracked_bboxes), np.zeros((len(tracked_bboxes),), dtype=np.bool))
@@ -110,15 +107,16 @@ def main(args):
         max_iou_per_new = np.asarray(ious).max(axis=1).tolist()
         if frame_idx == 0:
             for iou, bbox in zip(max_iou_per_new, frame_bboxes):
+                bbox = (bbox[0], bbox[1], bbox[2] - bbox[0], bbox[3] - bbox[1])
                 if iou <= args.iou_thresh:
                     trackers.append(cv2.TrackerGOTURN_create())
                     trackers[-1].init(frame, bbox)
                     tracked_bboxes.append(bbox)
+                    start_frame_ids.append(frame_idx)
 
         for bbox in tracked_bboxes:
             frame = draw_bbox(frame, bbox)
         output_video.write(frame)
-        '''
 
 
 if __name__ == '__main__':
