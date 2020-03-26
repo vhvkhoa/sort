@@ -87,6 +87,7 @@ def main(args):
         if len(untracked_ids) > 0:
             for index in untracked_ids[::-1]:
                 del tracked_bboxes[index]
+        if len(tracked_bboxes) == 0:
             break
 
         if len(frame_bboxes) > 0 and len(tracked_bboxes) > 0:
@@ -95,13 +96,12 @@ def main(args):
             ious = np.zeros((len(frame_bboxes), 1))
 
         max_iou_per_new = np.asarray(ious).max(axis=1).tolist()
-        for iou, bbox in zip(max_iou_per_new, frame_bboxes):
-            if iou <= args.iou_thresh:
-                if len(trackers) >= 1:
-                    break
-                trackers.append(cv2.TrackerGOTURN_create())
-                trackers[-1].init(frame, (bbox[0], bbox[1], bbox[2] - bbox[0], bbox[3] - bbox[1]))
-                tracked_bboxes.append(bbox)
+        if frame_idx == 0:
+            for iou, bbox in zip(max_iou_per_new, frame_bboxes):
+                if iou <= args.iou_thresh:
+                    trackers.append(cv2.TrackerGOTURN_create())
+                    trackers[-1].init(frame, (bbox[0], bbox[1], bbox[2] - bbox[0], bbox[3] - bbox[1]))
+                    tracked_bboxes.append(bbox)
 
         for bbox in tracked_bboxes:
             frame = draw_bbox(frame, bbox)
