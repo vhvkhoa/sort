@@ -72,7 +72,12 @@ def main(args):
     tracker.init(frame, bbox)
     for frame_idx in tqdm(range(num_frames)):
         success, frame = input_video.read()
-        tracker.update(frame)
+        success, bbox = tracker.update(frame)
+        if success:
+            frame = draw_bbox(frame, bbox)
+            output_video.write(frame)
+        else:
+            break
         '''
         frame_bboxes = np.concatenate([
             bboxes[frame_idx][3],
@@ -109,11 +114,11 @@ def main(args):
                     trackers.append(cv2.TrackerGOTURN_create())
                     trackers[-1].init(frame, bbox)
                     tracked_bboxes.append(bbox)
-        '''
 
         for bbox in tracked_bboxes:
             frame = draw_bbox(frame, bbox)
         output_video.write(frame)
+        '''
 
 
 if __name__ == '__main__':
