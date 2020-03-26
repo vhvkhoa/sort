@@ -92,7 +92,7 @@ def main(args):
         for i, (tracker, start_frame) in enumerate(zip(trackers, start_frame_ids)):
             success, bbox = tracker.update(frame)
             if success and frame_idx - start_frame < args.time_thresh:
-                tracked_bboxes[i] = bbox
+                tracked_bboxes[i] = np.array([bbox[0], bbox[1], bbox[2] + bbox[0], bbox[3] + bbox[1]])
             else:
                 untracked_ids.append(i)
         if len(untracked_ids) > 0:
@@ -110,12 +110,12 @@ def main(args):
         print(max_iou_per_new)
         if frame_idx == 0:
             for iou, bbox in zip(max_iou_per_new, frame_bboxes):
-                bbox = (bbox[0], bbox[1], bbox[2] - bbox[0], bbox[3] - bbox[1])
                 if iou <= args.iou_thresh:
-                    trackers.append(cv2.TrackerCSRT_create())
-                    trackers[-1].init(frame, bbox)
                     tracked_bboxes.append(bbox)
                     start_frame_ids.append(frame_idx)
+                    trackers.append(cv2.TrackerCSRT_create())
+                    bbox = (bbox[0], bbox[1], bbox[2] - bbox[0], bbox[3] - bbox[1])
+                    trackers[-1].init(frame, bbox)
 
         for bbox in tracked_bboxes:
             frame = draw_bbox(frame, bbox)
