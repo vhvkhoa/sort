@@ -73,7 +73,7 @@ def main(args):
         ).tolist()
         frame_bboxes = [
             bbox[:4] for bbox in frame_bboxes
-            if bbox[4] > args.thresh
+            if bbox[4] > args.confidence_thresh
         ]
 
         untracked_ids = []
