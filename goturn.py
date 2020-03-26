@@ -60,7 +60,7 @@ def main(args):
         frameSize=(width, height),
         isColor=True
     )
-    num_frames = input_video.get(cv2.CAP_PROP_FRAME_COUNT)
+    num_frames = int(input_video.get(cv2.CAP_PROP_FRAME_COUNT))
 
     trackers = []
     tracked_bboxes = []
