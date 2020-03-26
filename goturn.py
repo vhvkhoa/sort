@@ -51,8 +51,8 @@ def main(args):
         bboxes = pkl.load(f)
 
     input_video = cv2.VideoCapture(args.input_video)
-    width = input_video.get(cv2.CAP_PROP_FRAME_WIDTH)
-    height = input_video.get(cv2.CAP_PROP_FRAME_HEIGHT)
+    width = int(input_video.get(cv2.CAP_PROP_FRAME_WIDTH))
+    height = int(input_video.get(cv2.CAP_PROP_FRAME_HEIGHT))
     output_video = cv2.VideoWriter(
         filename=args.output_video,
         fourcc=cv2.VideoWriter_fourcc(*'mp4v'),
