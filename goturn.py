@@ -33,7 +33,7 @@ def get_args():
         type=float,
         default=0.3
     )
-    return parser.parser_args()
+    return parser.parse_args()
 
 
 def draw_bbox(frame, bbox):
