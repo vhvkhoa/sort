@@ -66,8 +66,13 @@ def main(args):
     tracked_bboxes = []
     for frame_idx in tqdm(range(num_frames)):
         success, frame = input_video.read()
+        frame_bboxes = np.concatenate([
+            bboxes[frame_idx][3],
+            bboxes[frame_idx][8]],
+            axis=0
+        ).tolist()
         frame_bboxes = [
-            bbox[:4] for bbox in bboxes[frame_idx][3] + bboxes[frame_idx][8]
+            bbox[:4] for bbox in frame_bboxes
             if bbox[4] > args.thresh
         ]
 
