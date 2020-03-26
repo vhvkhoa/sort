@@ -96,8 +96,8 @@ def main(args):
         for iou, bbox in zip(max_iou_per_new, frame_bboxes):
             if iou <= args.iou_thresh:
                 trackers.append(cv2.TrackerGOTURN_create())
+                trackers[-1].init(frame, bbox)
                 tracked_bboxes.append(bbox)
-                trackers[-1]
 
         for bbox in tracked_bboxes:
             frame = draw_bbox(frame, bbox)
