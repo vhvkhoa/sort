@@ -94,7 +94,7 @@ def main(args):
 
         max_iou_per_new = np.asarray(ious).max(axis=1)
         for iou in max_iou_per_new:
-            if iou > args.iou_thresh:
+            if iou <= args.iou_thresh:
                 trackers.append(cv2.TrackerGOTURN_create(frame, bbox))
 
         for bbox in tracked_bboxes:
