@@ -89,7 +89,7 @@ def main(args):
                 del tracked_bboxes[index]
 
         if len(frame_bboxes) > 0 and len(tracked_bboxes) > 0:
-            ious = mask_util.iou(frame_bboxes, tracked_bboxes, np.zeros((len(tracked_bboxes),), dtype=np.bool))
+            ious = mask_util.iou(np.array(frame_bboxes), np.array(tracked_bboxes), np.zeros((len(tracked_bboxes),), dtype=np.bool))
         elif len(frame_bboxes) > 0:
             ious = np.zeros((len(frame_bboxes), 1))
 
