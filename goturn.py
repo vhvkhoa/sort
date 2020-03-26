@@ -98,6 +98,8 @@ def main(args):
         if len(untracked_ids) > 0:
             for index in untracked_ids[::-1]:
                 del tracked_bboxes[index]
+                del trackers[index]
+                del start_frame_ids[index]
 
         if len(frame_bboxes) > 0 and len(tracked_bboxes) > 0:
             ious = mask_util.iou(np.array(frame_bboxes), np.array(tracked_bboxes), np.zeros((len(tracked_bboxes),), dtype=np.bool))
