@@ -72,7 +72,7 @@ def main(args):
             axis=0
         ).tolist()
         frame_bboxes = [
-            bbox[:4] for bbox in frame_bboxes
+            tuple(bbox[:4]) for bbox in frame_bboxes
             if bbox[4] > args.confidence_thresh
         ]
 
