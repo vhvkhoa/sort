@@ -1,6 +1,7 @@
 import argparse
 import pickle as pkl
 
+from tqdm import tqdm
 import cv2
 import numpy as np
 import pycocotools.mask as mask_util
@@ -63,7 +64,7 @@ def main(args):
 
     trackers = []
     tracked_bboxes = []
-    for frame_idx in range(num_frames):
+    for frame_idx in tqdm(range(num_frames)):
         success, frame = input_video.read()
         frame_bboxes = [
             bbox[:4] for bbox in bboxes[frame_idx][3] + bboxes[frame_idx][8]
