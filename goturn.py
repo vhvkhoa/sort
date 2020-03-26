@@ -87,7 +87,7 @@ def main(args):
         if len(untracked_ids) > 0:
             for index in untracked_ids[::-1]:
                 del tracked_bboxes[index]
-        if len(tracked_bboxes) == 0:
+        if frame_idx > 0 and len(tracked_bboxes) == 0:
             break
 
         if len(frame_bboxes) > 0 and len(tracked_bboxes) > 0:
