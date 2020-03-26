@@ -103,6 +103,7 @@ def main(args):
         for bbox in tracked_bboxes:
             frame = draw_bbox(frame, bbox)
         output_video.write(frame)
+        print(len(trackers))
 
 
 if __name__ == '__main__':
