@@ -27,7 +27,7 @@ def get_args():
     parser.add_argument(
         '--iou-thresh',
         type=float,
-        default=0.3
+        default=0.6
     )
     parser.add_argument(
         '--confidence-thresh',
@@ -107,6 +107,7 @@ def main(args):
             ious = np.zeros((len(frame_bboxes), 1))
 
         max_iou_per_new = np.asarray(ious).max(axis=1).tolist()
+        print(max_iou_per_new)
         if frame_idx == 0:
             for iou, bbox in zip(max_iou_per_new, frame_bboxes):
                 bbox = (bbox[0], bbox[1], bbox[2] - bbox[0], bbox[3] - bbox[1])
