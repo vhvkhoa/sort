@@ -76,6 +76,7 @@ def main(args):
             tuple(bbox[:4]) for bbox in frame_bboxes
             if bbox[4] > args.confidence_thresh
         ]
+        print('Number of input bboxes: ', len(frame_bboxes))
 
         untracked_ids = []
         for i, tracker in enumerate(trackers):
@@ -90,6 +91,7 @@ def main(args):
 
         if len(frame_bboxes) > 0 and len(tracked_bboxes) > 0:
             ious = mask_util.iou(np.array(frame_bboxes), np.array(tracked_bboxes), np.zeros((len(tracked_bboxes),), dtype=np.bool))
+            print(ious)
         elif len(frame_bboxes) > 0:
             ious = np.zeros((len(frame_bboxes), 1))
 
