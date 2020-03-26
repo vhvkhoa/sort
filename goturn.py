@@ -79,7 +79,7 @@ def main(args):
             bboxes[frame_idx][3],
             bboxes[frame_idx][8]],
             axis=0
-        ).tolist()
+        )
 
         # Keep bboxes with confidence score more than threshold
         frame_bboxes = [
