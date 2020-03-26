@@ -38,6 +38,7 @@ def get_args():
 
 
 def draw_bbox(frame, bbox):
+    bbox = np.array(bbox, dtype=np.int32)
     cv2.rectangle(frame, (bbox[0], bbox[1]), (bbox[2], bbox[3]), (0, 255, 0), 2)
     return frame
 
