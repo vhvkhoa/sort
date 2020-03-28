@@ -114,7 +114,6 @@ def main(args):
                 trackers.append(cv2.TrackerMOSSE_create())
                 bbox = (bbox[0], bbox[1], bbox[2] - bbox[0], bbox[3] - bbox[1])
                 trackers[-1].init(frame, bbox)
-        print(len(trackers))
 
         for bbox in tracked_bboxes:
             frame = draw_bbox(frame, bbox)
