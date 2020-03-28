@@ -111,7 +111,7 @@ def main(args):
             if iou <= args.iou_thresh:
                 tracked_bboxes.append(bbox)
                 start_frame_ids.append(frame_idx)
-                trackers.append(cv2.TrackerMOSSE_create())
+                trackers.append(cv2.TrackerKCF_create())
                 bbox = (bbox[0], bbox[1], bbox[2] - bbox[0], bbox[3] - bbox[1])
                 trackers[-1].init(frame, bbox)
 
