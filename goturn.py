@@ -71,7 +71,7 @@ def main(args):
         width = int(input_video.get(cv2.CAP_PROP_FRAME_WIDTH))
         height = int(input_video.get(cv2.CAP_PROP_FRAME_HEIGHT))
         output_video = cv2.VideoWriter(
-            filename=path.join(args.output_video_dir, input_video_path),
+            filename=path.join(args.output_video_dir, path.basename(input_video_path)),
             fourcc=cv2.VideoWriter_fourcc(*'mp4v'),
             fps=30.,
             frameSize=(width, height),
