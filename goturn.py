@@ -44,7 +44,7 @@ def get_args():
     parser.add_argument(
         '--time-thresh',
         type=int,
-        default=100
+        default=200
     )
     return parser.parse_args()
 
@@ -81,6 +81,7 @@ def main(args):
 
         trackers = []
         tracked_bboxes = []
+        start_times = []
         bbox_ids = []
         current_bbox_id = 0
 
@@ -102,9 +103,9 @@ def main(args):
 
             # Remove bboxes that cannot be tracked or exists over a threshold
             untracked_ids = []
-            for i, tracker in enumerate(trackers):
+            for i, tracker, start_idx in enumerate(zip(trackers, start_times)):
                 success, bbox = tracker.update(frame)
-                if success:  # and frame_idx - start_frame < args.time_thresh:
+                if success and frame_idx - start_idx < args.time_thresh:
                     tracked_bboxes[i] = np.array([bbox[0], bbox[1], bbox[2] + bbox[0], bbox[3] + bbox[1]])
                 else:
                     untracked_ids.append(i)
@@ -112,6 +113,7 @@ def main(args):
                 for index in untracked_ids[::-1]:
                     del tracked_bboxes[index]
                     del trackers[index]
+                    del start_times[index]
                     del bbox_ids[index]
 
             if len(frame_bboxes) > 0 and len(tracked_bboxes) > 0:
@@ -123,6 +125,7 @@ def main(args):
             for iou, bbox in zip(max_iou_per_new, frame_bboxes):
                 if iou <= args.iou_thresh:
                     tracked_bboxes.append(bbox)
+                    start_times.append(frame_idx)
                     bbox_ids.append(current_bbox_id)
                     trackers.append(cv2.TrackerMOSSE_create())
                     bbox = (bbox[0], bbox[1], bbox[2] - bbox[0], bbox[3] - bbox[1])
