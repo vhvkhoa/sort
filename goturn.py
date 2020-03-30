@@ -103,7 +103,7 @@ def main(args):
 
             # Remove bboxes that cannot be tracked or exists over a threshold
             untracked_ids = []
-            for i, tracker, start_idx in enumerate(zip(trackers, start_times)):
+            for i, (tracker, start_idx) in enumerate(zip(trackers, start_times)):
                 success, bbox = tracker.update(frame)
                 if success and frame_idx - start_idx < args.time_thresh:
                     tracked_bboxes[i] = np.array([bbox[0], bbox[1], bbox[2] + bbox[0], bbox[3] + bbox[1]])
