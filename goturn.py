@@ -42,11 +42,11 @@ def get_args():
     return parser.parse_args()
 
 
-def draw_bbox(frame, bbox, frame_id):
+def draw_bbox(frame, bbox, bbox_id):
     bbox = np.array(bbox, dtype=np.int32)
     cv2.rectangle(frame, (bbox[0], bbox[1]), (bbox[2], bbox[3]), (0, 255, 0), 2)
     cv2.putText(
-        frame, str(frame_id),
+        frame, str(bbox_id),
         (bbox[0], bbox[1] - 2),
         cv2.FONT_HERSHEY_SIMPLEX,
         0.5, (0, 255, 0), thickness=1, lineType=cv2.LINE_AA)
@@ -71,7 +71,9 @@ def main(args):
 
     trackers = []
     tracked_bboxes = []
-    start_frame_ids = []
+    bbox_ids = []
+    current_bbox_id = 0
+
     for frame_idx in tqdm(range(num_frames)):
         success, frame = input_video.read()
 
@@ -90,9 +92,9 @@ def main(args):
 
         # Remove bboxes that cannot be tracked or exists over a threshold
         untracked_ids = []
-        for i, (tracker, start_frame) in enumerate(zip(trackers, start_frame_ids)):
+        for i, tracker in enumerate(trackers):
             success, bbox = tracker.update(frame)
-            if success and frame_idx - start_frame < args.time_thresh:
+            if success:  # and frame_idx - start_frame < args.time_thresh:
                 tracked_bboxes[i] = np.array([bbox[0], bbox[1], bbox[2] + bbox[0], bbox[3] + bbox[1]])
             else:
                 untracked_ids.append(i)
@@ -100,7 +102,7 @@ def main(args):
             for index in untracked_ids[::-1]:
                 del tracked_bboxes[index]
                 del trackers[index]
-                del start_frame_ids[index]
+                del bbox_ids[index]
 
         if len(frame_bboxes) > 0 and len(tracked_bboxes) > 0:
             ious = mask_util.iou(np.array(frame_bboxes), np.array(tracked_bboxes), np.zeros((len(tracked_bboxes),), dtype=np.bool))
@@ -111,13 +113,14 @@ def main(args):
         for iou, bbox in zip(max_iou_per_new, frame_bboxes):
             if iou <= args.iou_thresh:
                 tracked_bboxes.append(bbox)
-                start_frame_ids.append(frame_idx)
+                bbox_ids.append(current_bbox_id)
                 trackers.append(cv2.TrackerMOSSE_create())
                 bbox = (bbox[0], bbox[1], bbox[2] - bbox[0], bbox[3] - bbox[1])
                 trackers[-1].init(frame, bbox)
+                current_bbox_id += 1
 
-        for bbox, frame_id in zip(tracked_bboxes, start_frame_ids):
-            frame = draw_bbox(frame, bbox, frame_id)
+        for bbox, bbox_id in zip(tracked_bboxes, bbox_ids):
+            frame = draw_bbox(frame, bbox, bbox_id)
         output_video.write(frame)
 
 
