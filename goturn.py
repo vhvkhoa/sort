@@ -12,7 +12,7 @@ def get_args():
     parser.add_argument(
         '--input-video',
         type=str,
-        default='datasets/AIC20_track1/Dataset_A/cam_1.mp4'
+        default='AIC20_track1/Dataset_A/cam_1.mp4'
     )
     parser.add_argument(
         '--input-bbox',
