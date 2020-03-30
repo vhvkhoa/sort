@@ -22,19 +22,19 @@ def get_args():
         default='mp4'
     )
     parser.add_argument(
-        '--input-bbox',
+        '--input-bbox-dir',
         type=str,
-        default='bboxes/cam_1.mp4.pkl'
+        default='bboxes/'
     )
     parser.add_argument(
-        '--output-video',
+        '--output-video-dir',
         type=str,
-        default='output_videos/cam_1.mp4'
+        default='output_videos/'
     )
     parser.add_argument(
         '--iou-thresh',
         type=float,
-        default=0.6
+        default=0.3
     )
     parser.add_argument(
         '--confidence-thresh',
@@ -71,7 +71,7 @@ def main(args):
         width = int(input_video.get(cv2.CAP_PROP_FRAME_WIDTH))
         height = int(input_video.get(cv2.CAP_PROP_FRAME_HEIGHT))
         output_video = cv2.VideoWriter(
-            filename=args.output_video,
+            filename=path.join(args.output_video_dir, input_video_path),
             fourcc=cv2.VideoWriter_fourcc(*'mp4v'),
             fps=30.,
             frameSize=(width, height),
