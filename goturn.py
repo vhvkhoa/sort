@@ -42,14 +42,15 @@ def get_args():
     return parser.parse_args()
 
 
-def draw_bbox(frame, bbox):
+def draw_bbox(frame, bbox, frame_id):
     bbox = np.array(bbox, dtype=np.int32)
     cv2.rectangle(frame, (bbox[0], bbox[1]), (bbox[2], bbox[3]), (0, 255, 0), 2)
+    cv2.putText(
+        frame, str(frame_id),
+        (bbox[0], bbox[1] - 2),
+        cv2.FONT_HERSHEY_SIMPLEX,
+        0.5, (0, 255, 0), thickness=1, lineType=cv2.LINE_AA)
     return frame
-
-
-def bbox_exists(bbox, tracked_bboxes):
-    pass
 
 
 def main(args):
@@ -111,12 +112,12 @@ def main(args):
             if iou <= args.iou_thresh:
                 tracked_bboxes.append(bbox)
                 start_frame_ids.append(frame_idx)
-                trackers.append(cv2.TrackerMedianFlow_create())
+                trackers.append(cv2.TrackerMOSSE_create())
                 bbox = (bbox[0], bbox[1], bbox[2] - bbox[0], bbox[3] - bbox[1])
                 trackers[-1].init(frame, bbox)
 
-        for bbox in tracked_bboxes:
-            frame = draw_bbox(frame, bbox)
+        for bbox, frame_id in zip(tracked_bboxes, start_frame_ids):
+            frame = draw_bbox(frame, bbox, frame_id)
         output_video.write(frame)
 
 
