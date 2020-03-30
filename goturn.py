@@ -64,7 +64,7 @@ def main(args):
     input_video_paths = glob(path.join(args.input_video_dir, '*.' + args.video_extension))
 
     for input_video_path in input_video_paths:
-        with open(path.join(args.input_bbox_dir, input_video_path + '.pkl'), 'rb') as f:
+        with open(path.join(path.basename(args.input_bbox_dir), input_video_path + '.pkl'), 'rb') as f:
             bboxes = pkl.load(f)
 
         input_video = cv2.VideoCapture(input_video_path)
