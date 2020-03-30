@@ -16,7 +16,7 @@ def get_args():
         type=str,
         default='AIC20_track1/Dataset_A/'
     )
-    parser.add_argurment(
+    parser.add_argument(
         'video-extension',
         type=str,
         default='mp4'
