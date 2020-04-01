@@ -90,8 +90,8 @@ def main(args):
 
             # Keep cars and trucks
             frame_bboxes = np.concatenate([
-                bboxes[frame_idx][3],
-                bboxes[frame_idx][8]],
+                bboxes[frame_idx][1],
+                bboxes[frame_idx][2]],
                 axis=0
             )
 
