@@ -2,3 +2,5 @@ AIC20_track1/
 bboxes/
 cam_1/
 .vscode/settings.json
+xml_prepro.py
+instance*
