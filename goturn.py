@@ -14,7 +14,7 @@ def get_args():
     parser.add_argument(
         '--input-video-dir',
         type=str,
-        default='AIC20_track1/Dataset_A/'
+        default='../datasets/AIC20_track1/Dataset_A/'
     )
     parser.add_argument(
         '--video-extension',
@@ -29,7 +29,7 @@ def get_args():
     parser.add_argument(
         '--output-video-dir',
         type=str,
-        default='output_videos/'
+        default='MOSSE_track_output/'
     )
     parser.add_argument(
         '--iou-thresh',
