@@ -91,6 +91,7 @@ def main(args):
     input_video_paths = glob(path.join(args.input_video_dir, '*.' + args.video_extension))
 
     for input_video_path in input_video_paths:
+        print(input_video_path)
         cam_name = '_'.join(path.basename(input_video_path).split('_')[:2])
         with open(path.join(args.input_bbox_dir, path.basename(input_video_path) + '.pkl'), 'rb') as f:
             bboxes = pkl.load(f)
