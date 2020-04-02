@@ -180,8 +180,8 @@ def main(args):
                     bbox = (bbox[0], bbox[1], bbox[2] - bbox[0], bbox[3] - bbox[1])
                     trackers[arg].init(frame, bbox)
 
-            for bboxes, bbox_id in zip(tracked_bboxes, bbox_ids):
-                frame = draw_bbox(frame, bboxes[-1], bbox_id, roi_coords)
+            for tracked_seq, bbox_id in zip(tracked_bboxes, bbox_ids):
+                frame = draw_bbox(frame, tracked_seq[-1], bbox_id, roi_coords)
             output_video.write(frame)
 
 
