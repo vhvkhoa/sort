@@ -54,8 +54,11 @@ def get_args():
     return parser.parse_args()
 
 
-def draw_bbox(frame, bbox, bbox_id):
+def draw_bbox(frame, bbox, bbox_id, roi):
     bbox = np.array(bbox, dtype=np.int32)
+    roi = np.array(roi, np.int32).reshape(-1, 1, 2)
+
+    cv2.polylines(frame, [roi], True, (0, 255, 0))
     cv2.rectangle(frame, (bbox[0], bbox[1]), (bbox[2], bbox[3]), (0, 255, 0), 2)
     cv2.putText(
         frame, str(bbox_id),
@@ -90,6 +93,8 @@ def main(args):
     for input_video_path in input_video_paths:
         with open(path.join(args.input_bbox_dir, path.basename(input_video_path) + '.pkl'), 'rb') as f:
             bboxes = pkl.load(f)
+        with open(path.join(args.input_roi_dir, path.basename(input_video_path)[:-4] + '.txt')) as f:
+            roi_coords = [[int(coord) for coord in line.split(',')] for line in f.read().split('\n')[:-1]]
 
         roi = np.load(path.join(args.input_roi_dir, path.basename(input_video_path)[:-4] + '.npy'))
 
@@ -166,7 +171,7 @@ def main(args):
                     trackers[arg].init(frame, bbox)
 
             for bbox, bbox_id in zip(tracked_bboxes, bbox_ids):
-                frame = draw_bbox(frame, bbox, bbox_id)
+                frame = draw_bbox(frame, bbox, bbox_id, roi_coords)
             output_video.write(frame)
 
 
