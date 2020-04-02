@@ -83,8 +83,8 @@ def verify_bbox(roi, bbox, old_bboxes=None, dist_thresh=None, time_thresh=None):
         return result
 
     old_bbox = old_bboxes[-time_thresh]
-    old_center_x = float(old_bbox[2] - bbox[0]) / 2
-    old_center_y = float(old_bbox[3] - old_bbox[1]) / 2
+    old_center_x = float(old_bbox[2] + bbox[0]) / 2
+    old_center_y = float(old_bbox[3] + old_bbox[1]) / 2
 
     l1_dist = abs(center_x - old_center_x) + abs(center_y - old_center_y)
     if l1_dist > dist_thresh:
@@ -146,7 +146,7 @@ def main(args):
                 success, bbox = tracker.update(frame)
                 bbox = [bbox[0], bbox[1], bbox[2] + bbox[0], bbox[3] + bbox[1]]
                 if success and verify_bbox(roi, bbox, tracked_bboxes[i], args.dist_thresh, args.time_thresh):
-                    tracked_bboxes[i].append(np.array([bbox[0], bbox[1], bbox[2] + bbox[0], bbox[3] + bbox[1]]))
+                    tracked_bboxes[i].append(np.array(bbox))
                 else:
                     untracked_ids.append(i)
             if len(untracked_ids) > 0:
