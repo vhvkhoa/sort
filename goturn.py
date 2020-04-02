@@ -89,6 +89,8 @@ def verify_bbox(roi, bbox, old_bboxes=None, dist_thresh=None, time_thresh=None):
     l1_dist = abs(center_x - old_center_x) + abs(center_y - old_center_y)
     if l1_dist > dist_thresh:
         result = True
+    else:
+        result = False
 
     return result
 
@@ -141,7 +143,6 @@ def main(args):
 
             # Remove bboxes that cannot be tracked or exists over a threshold
             untracked_ids = []
-            assert len(trackers) == len(tracked_bboxes)
             for i, tracker in enumerate(trackers):
                 success, bbox = tracker.update(frame)
                 bbox = [bbox[0], bbox[1], bbox[2] + bbox[0], bbox[3] + bbox[1]]
