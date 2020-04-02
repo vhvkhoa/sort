@@ -27,6 +27,11 @@ def get_args():
         default='bboxes/'
     )
     parser.add_argument(
+        '--input-roi-dir',
+        type=str,
+        default='ROI_numpy/'
+    )
+    parser.add_argument(
         '--output-video-dir',
         type=str,
         default='MOSSE_track_output/'
@@ -60,12 +65,33 @@ def draw_bbox(frame, bbox, bbox_id):
     return frame
 
 
+def verify_bbox(roi, bbox, old_bbox=None, dist_thresh=None):
+    center_x = float(bbox[2] - bbox[0]) / 2
+    center_y = float(bbox[3] - bbox[1]) / 2
+
+    result = roi[int(center_x)][int(center_y)]
+
+    if old_bbox is None or result is False:
+        return result
+
+    old_center_x = float(old_bbox[2] - bbox[0]) / 2
+    old_center_y = float(old_bbox[3] - old_bbox[1]) / 2
+
+    l1_dist = abs(center_x - old_center_x) + abs(center_y - old_center_y)
+    if l1_dist > dist_thresh:
+        result = False
+
+    return result
+
+
 def main(args):
     input_video_paths = glob(path.join(args.input_video_dir, '*.' + args.video_extension))
 
     for input_video_path in input_video_paths:
         with open(path.join(args.input_bbox_dir, path.basename(input_video_path) + '.pkl'), 'rb') as f:
             bboxes = pkl.load(f)
+
+        roi = np.load(path.join(args.input_roi_dir, path.basename(input_video_path)[:-4] + '.npy'))
 
         input_video = cv2.VideoCapture(input_video_path)
         width = int(input_video.get(cv2.CAP_PROP_FRAME_WIDTH))
@@ -105,7 +131,8 @@ def main(args):
             untracked_ids = []
             for i, (tracker, start_idx) in enumerate(zip(trackers, start_times)):
                 success, bbox = tracker.update(frame)
-                if success and frame_idx - start_idx < args.time_thresh:
+                bbox = [bbox[0], bbox[1], bbox[2] + bbox[0], bbox[3] + bbox[1]]
+                if success and verify_bbox(roi, bbox):
                     tracked_bboxes[i] = np.array([bbox[0], bbox[1], bbox[2] + bbox[0], bbox[3] + bbox[1]])
                 else:
                     untracked_ids.append(i)
@@ -122,7 +149,8 @@ def main(args):
                 ious = np.zeros((len(frame_bboxes), 1))
 
             max_iou_per_new = np.asarray(ious).max(axis=1).tolist()
-            for iou, bbox in zip(max_iou_per_new, frame_bboxes):
+            arg_max_iou_per_new = np.asarray(ious).argmax(axis=1).tolist()
+            for iou, arg, bbox in zip(max_iou_per_new, arg_max_iou_per_new, frame_bboxes):
                 if iou <= args.iou_thresh:
                     tracked_bboxes.append(bbox)
                     start_times.append(frame_idx)
@@ -131,6 +159,11 @@ def main(args):
                     bbox = (bbox[0], bbox[1], bbox[2] - bbox[0], bbox[3] - bbox[1])
                     trackers[-1].init(frame, bbox)
                     current_bbox_id += 1
+                else:
+                    tracked_bboxes[arg] = bbox
+                    trackers[arg] = cv2.TrackerMOSSE_create()
+                    bbox = (bbox[0], bbox[1], bbox[2] - bbox[0], bbox[3] - bbox[1])
+                    trackers[arg].init(frame, bbox)
 
             for bbox, bbox_id in zip(tracked_bboxes, bbox_ids):
                 frame = draw_bbox(frame, bbox, bbox_id)
