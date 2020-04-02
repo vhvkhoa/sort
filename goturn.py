@@ -165,14 +165,15 @@ def main(args):
             max_iou_per_new = np.asarray(ious).max(axis=1).tolist()
             arg_max_iou_per_new = np.asarray(ious).argmax(axis=1).tolist()
             for iou, arg, bbox in zip(max_iou_per_new, arg_max_iou_per_new, frame_bboxes):
-                if iou <= args.iou_thresh and verify_bbox(roi, bbox):
-                    tracked_bboxes.append([bbox])
-                    start_times.append(frame_idx)
-                    bbox_ids.append(current_bbox_id)
-                    trackers.append(cv2.TrackerMOSSE_create())
-                    bbox = (bbox[0], bbox[1], bbox[2] - bbox[0], bbox[3] - bbox[1])
-                    trackers[-1].init(frame, bbox)
-                    current_bbox_id += 1
+                if iou <= args.iou_thresh:
+                    if verify_bbox(roi, bbox):
+                        tracked_bboxes.append([bbox])
+                        start_times.append(frame_idx)
+                        bbox_ids.append(current_bbox_id)
+                        trackers.append(cv2.TrackerMOSSE_create())
+                        bbox = (bbox[0], bbox[1], bbox[2] - bbox[0], bbox[3] - bbox[1])
+                        trackers[-1].init(frame, bbox)
+                        current_bbox_id += 1
                 else:
                     tracked_bboxes[arg][-1] = bbox
                     trackers[arg] = cv2.TrackerMOSSE_create()
