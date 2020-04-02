@@ -175,11 +175,13 @@ def main(args):
                         trackers[-1].init(frame, xywh)
                         current_bbox_id += 1
 
+                '''
                 else:
                     tracked_bboxes[arg][-1] = xyxy
                     trackers[arg] = cv2.TrackerMOSSE_create()
                     xywh = (xyxy[0], xyxy[1], xyxy[2] - xyxy[0], xyxy[3] - xyxy[1])
                     trackers[arg].init(frame, xywh)
+                '''
 
             for tracked_seq, bbox_id in zip(tracked_bboxes, bbox_ids):
                 frame = draw_bbox(frame, tracked_seq[-1], bbox_id, roi_coords)
