@@ -91,12 +91,13 @@ def main(args):
     input_video_paths = glob(path.join(args.input_video_dir, '*.' + args.video_extension))
 
     for input_video_path in input_video_paths:
+        cam_name = '_'.join(path.basename(input_video_path).split('_')[:2])
         with open(path.join(args.input_bbox_dir, path.basename(input_video_path) + '.pkl'), 'rb') as f:
             bboxes = pkl.load(f)
-        with open(path.join(args.input_roi_dir, path.basename(input_video_path)[:-4] + '.txt')) as f:
+        with open(path.join(args.input_roi_dir, cam_name + '.txt')) as f:
             roi_coords = [[int(coord) for coord in line.split(',')] for line in f.read().split('\n')[:-1]]
 
-        roi = np.load(path.join(args.input_roi_dir, path.basename(input_video_path)[:-4] + '.npy'))
+        roi = np.load(path.join(args.input_roi_dir, cam_name + '.npy'))
 
         input_video = cv2.VideoCapture(input_video_path)
         width = int(input_video.get(cv2.CAP_PROP_FRAME_WIDTH))
