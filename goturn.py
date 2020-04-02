@@ -77,7 +77,7 @@ def verify_bbox(roi, bbox, old_bboxes=None, dist_thresh=None, time_thresh=None):
     center_x = float(bbox[2] + bbox[0]) / 2
     center_y = float(bbox[3] + bbox[1]) / 2
 
-    result = roi[int(center_x)][int(center_y)]
+    result = roi[int(center_y)][int(center_x)]
 
     if old_bboxes is None or len(old_bboxes) < time_thresh or result is False:
         return result
