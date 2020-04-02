@@ -164,21 +164,21 @@ def main(args):
 
             max_iou_per_new = np.asarray(ious).max(axis=1).tolist()
             arg_max_iou_per_new = np.asarray(ious).argmax(axis=1).tolist()
-            for iou, arg, bbox in zip(max_iou_per_new, arg_max_iou_per_new, frame_bboxes):
+            for iou, arg, xyxy in zip(max_iou_per_new, arg_max_iou_per_new, frame_bboxes):
                 if iou <= args.iou_thresh:
-                    if verify_bbox(roi, bbox):
-                        tracked_bboxes.append([bbox])
+                    if verify_bbox(roi, xyxy):
+                        tracked_bboxes.append([xyxy])
                         start_times.append(frame_idx)
                         bbox_ids.append(current_bbox_id)
                         trackers.append(cv2.TrackerMOSSE_create())
-                        bbox = (bbox[0], bbox[1], bbox[2] - bbox[0], bbox[3] - bbox[1])
-                        trackers[-1].init(frame, bbox)
+                        xywh = (xyxy[0], xyxy[1], xyxy[2] - xyxy[0], xyxy[3] - xyxy[1])
+                        trackers[-1].init(frame, xywh)
                         current_bbox_id += 1
                 else:
-                    tracked_bboxes[arg][-1] = bbox
+                    tracked_bboxes[arg][-1] = xyxy
                     trackers[arg] = cv2.TrackerMOSSE_create()
-                    bbox = (bbox[0], bbox[1], bbox[2] - bbox[0], bbox[3] - bbox[1])
-                    trackers[arg].init(frame, bbox)
+                    xywh = (xyxy[0], xyxy[1], xyxy[2] - xyxy[0], xyxy[3] - xyxy[1])
+                    trackers[arg].init(frame, xywh)
 
             for tracked_seq, bbox_id in zip(tracked_bboxes, bbox_ids):
                 frame = draw_bbox(frame, tracked_seq[-1], bbox_id, roi_coords)
