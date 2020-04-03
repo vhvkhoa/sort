@@ -111,8 +111,6 @@ def main(args):
     for input_video_path in input_video_paths:
         print(input_video_path)
         cam_name = '_'.join(path.basename(input_video_path).split('.')[0].split('_')[:2])
-        print(cam_name)
-        continue
         with open(path.join(args.input_bbox_dir, path.basename(input_video_path) + '.pkl'), 'rb') as f:
             bboxes = pkl.load(f)
         with open(path.join(args.input_roi_dir, cam_name + '.txt')) as f:
