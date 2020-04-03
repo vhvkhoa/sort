@@ -36,7 +36,7 @@ def get_args():
     parser.add_argument(
         '--output-video-dir',
         type=str,
-        default='MOSSE_track_output/'
+        default='CSRT_track_output/'
     )
     parser.add_argument(
         '--iou-lower-thresh',
