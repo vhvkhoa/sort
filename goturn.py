@@ -92,6 +92,7 @@ def verify_bbox(roi, bbox, old_bboxes=None, dist_thresh=None, time_thresh=None):
     else:
         result = False
 
+    print(result)
     return result
 
 
@@ -125,7 +126,7 @@ def main(args):
         bbox_ids = []
         current_bbox_id = 0
 
-        for frame_idx in tqdm(range(num_frames)):
+        for frame_idx in tqdm(range(100)):
             success, frame = input_video.read()
 
             # Keep cars and trucks
