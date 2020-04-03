@@ -6,6 +6,8 @@ import pickle as pkl
 from tqdm import tqdm
 import cv2
 import numpy as np
+import sys
+sys.path.append('cocoapi/PythonAPI')
 import pycocotools.mask as mask_util
 
 
@@ -37,9 +39,14 @@ def get_args():
         default='MOSSE_track_output/'
     )
     parser.add_argument(
-        '--iou-thresh',
+        '--iou-lower-thresh',
         type=float,
-        default=0.6
+        default=0.3
+    )
+    parser.add_argument(
+        '--iou-upper-thresh',
+        type=float,
+        default=0.3
     )
     parser.add_argument(
         '--confidence-thresh',
@@ -53,33 +60,36 @@ def get_args():
     )
     parser.add_argument(
         '--dist-thresh',
-        type=int,
-        default=10
+        type=int, default=5
     )
     return parser.parse_args()
 
 
-def draw_bbox(frame, bbox, bbox_id, roi):
-    bbox = np.array(bbox, dtype=np.int32)
+def draw_roi(frame, roi):
     roi = np.array(roi, np.int32).reshape(-1, 1, 2)
+    cv2.polylines(frame, [roi], True, (0, 255, 0), thickness=2)
+    return frame
 
-    cv2.polylines(frame, [roi], True, (0, 255, 0))
+
+def draw_bbox(frame, bbox, bbox_id):
+    bbox = np.array(bbox, dtype=np.int32)
+
     cv2.rectangle(frame, (bbox[0], bbox[1]), (bbox[2], bbox[3]), (0, 255, 0), 2)
     cv2.putText(
         frame, str(bbox_id),
         (bbox[0], bbox[1] - 2),
         cv2.FONT_HERSHEY_SIMPLEX,
-        0.5, (0, 255, 0), thickness=1, lineType=cv2.LINE_AA)
+        1.0, (0, 255, 0), thickness=2, lineType=cv2.LINE_AA)
     return frame
 
 
-def verify_bbox(roi, bbox, old_bboxes=None, dist_thresh=None, time_thresh=None):
+def verify_bbox(roi, bbox, old_bboxes=None, dist_thresh=None, time_thresh=None, bbox_id=None):
     center_x = float(bbox[2] + bbox[0]) / 2
     center_y = float(bbox[3] + bbox[1]) / 2
 
     result = roi[int(center_y)][int(center_x)]
 
-    if (old_bboxes is None or len(old_bboxes) < time_thresh) or (result is False):
+    if old_bboxes is None or len(old_bboxes) < time_thresh or not result:
         return result
 
     old_bbox = old_bboxes[-time_thresh]
@@ -92,7 +102,6 @@ def verify_bbox(roi, bbox, old_bboxes=None, dist_thresh=None, time_thresh=None):
     else:
         result = False
 
-    print(result)
     return result
 
 
@@ -101,7 +110,9 @@ def main(args):
 
     for input_video_path in input_video_paths:
         print(input_video_path)
-        cam_name = '_'.join(path.basename(input_video_path).split('_')[:2])
+        cam_name = '_'.join(path.basename(input_video_path).split('.')[0].split('_')[:2])
+        print(cam_name)
+        continue
         with open(path.join(args.input_bbox_dir, path.basename(input_video_path) + '.pkl'), 'rb') as f:
             bboxes = pkl.load(f)
         with open(path.join(args.input_roi_dir, cam_name + '.txt')) as f:
@@ -126,7 +137,7 @@ def main(args):
         bbox_ids = []
         current_bbox_id = 0
 
-        for frame_idx in tqdm(range(100)):
+        for frame_idx in tqdm(range(num_frames)):
             success, frame = input_video.read()
 
             # Keep cars and trucks
@@ -144,10 +155,10 @@ def main(args):
 
             # Remove bboxes that cannot be tracked or exists over a threshold
             untracked_ids = []
-            for i, tracker in enumerate(trackers):
+            for i, (tracker, bbox_id) in enumerate(zip(trackers, bbox_ids)):
                 success, bbox = tracker.update(frame)
                 bbox = [bbox[0], bbox[1], bbox[2] + bbox[0], bbox[3] + bbox[1]]
-                if success and verify_bbox(roi, bbox, tracked_bboxes[i], args.dist_thresh, args.time_thresh):
+                if success and verify_bbox(roi, bbox, tracked_bboxes[i], args.dist_thresh, args.time_thresh, bbox_id):
                     tracked_bboxes[i].append(np.array(bbox))
                 else:
                     untracked_ids.append(i)
@@ -166,25 +177,24 @@ def main(args):
             max_iou_per_new = np.asarray(ious).max(axis=1).tolist()
             arg_max_iou_per_new = np.asarray(ious).argmax(axis=1).tolist()
             for iou, arg, xyxy in zip(max_iou_per_new, arg_max_iou_per_new, frame_bboxes):
-                if iou <= args.iou_thresh:
+                if iou <= args.iou_lower_thresh:
                     if verify_bbox(roi, xyxy):
                         tracked_bboxes.append([xyxy])
                         bbox_ids.append(current_bbox_id)
-                        trackers.append(cv2.TrackerMOSSE_create())
+                        trackers.append(cv2.TrackerCSRT_create())
                         xywh = (xyxy[0], xyxy[1], xyxy[2] - xyxy[0], xyxy[3] - xyxy[1])
                         trackers[-1].init(frame, xywh)
                         current_bbox_id += 1
 
-                '''
-                else:
+                elif iou >= args.iou_upper_thresh:
                     tracked_bboxes[arg][-1] = xyxy
-                    trackers[arg] = cv2.TrackerMOSSE_create()
+                    trackers[arg] = cv2.TrackerCSRT_create()
                     xywh = (xyxy[0], xyxy[1], xyxy[2] - xyxy[0], xyxy[3] - xyxy[1])
                     trackers[arg].init(frame, xywh)
-                '''
 
             for tracked_seq, bbox_id in zip(tracked_bboxes, bbox_ids):
-                frame = draw_bbox(frame, tracked_seq[-1], bbox_id, roi_coords)
+                frame = draw_bbox(frame, tracked_seq[-1], bbox_id)
+            frame = draw_roi(frame, roi_coords)
             output_video.write(frame)
 
 
