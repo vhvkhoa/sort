@@ -178,6 +178,7 @@ def main(args):
             untracked_ids = []
             for i, bbox_id in enumerate(bbox_ids):
                 bbox = new_bboxes[i]
+                print(bbox)
                 bbox = [bbox[0], bbox[1], bbox[2] + bbox[0], bbox[3] + bbox[1]]
                 if success and verify_bbox(roi, bbox, tracked_bboxes[i], args.dist_thresh, args.time_thresh, bbox_id):
                     tracked_bboxes[i].append(np.array(bbox))
