@@ -176,7 +176,7 @@ def main(args):
             processes = []
 
             untracked_ids = []
-            for i, bbox_id in range(bbox_ids):
+            for i, bbox_id in enumerate(bbox_ids):
                 bbox = new_bboxes[i]
                 bbox = [bbox[0], bbox[1], bbox[2] + bbox[0], bbox[3] + bbox[1]]
                 if success and verify_bbox(roi, bbox, tracked_bboxes[i], args.dist_thresh, args.time_thresh, bbox_id):
