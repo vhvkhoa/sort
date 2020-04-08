@@ -163,8 +163,7 @@ def main(args):
             # new_bboxes = manager.dict()
             new_bboxes = []
             for i in range(len(trackers)):
-                success, bbox = update_tracker(tracker, frame)
-                new_bboxes.append(bbox)
+                update_tracker(i, trackers[i], frame, new_bboxes)
                 '''
                 if len(processes) < num_cpus:
                     p = multiprocessing.Process(target=update_tracker, args=(i, trackers[i], frame, new_bboxes))
