@@ -2,6 +2,7 @@ from os import path
 from glob import glob
 import argparse
 import pickle as pkl
+import multiprocessing
 
 from tqdm import tqdm
 import cv2
@@ -105,8 +106,14 @@ def verify_bbox(roi, bbox, old_bboxes=None, dist_thresh=None, time_thresh=None, 
     return result
 
 
+def update_tracker(idx, tracker, frame, bbox_list):
+    bbox_list[idx] = tracker.update(frame)
+
+
 def main(args):
     input_video_paths = glob(path.join(args.input_video_dir, '*.' + args.video_extension))
+    num_cpus = multiprocessing.cpu_count()
+    processes = []
 
     for input_video_path in input_video_paths:
         print(input_video_path)
@@ -152,9 +159,25 @@ def main(args):
             ]
 
             # Remove bboxes that cannot be tracked or exists over a threshold
+            manager = multiprocessing.Manager()
+            new_bboxes = manager.dict()
+            for i in range(len(trackers)):
+                # success, bbox = update_tracker(tracker, frame)
+                if len(processes) < num_cpus:
+                    p = multiprocessing.Process(target=update_tracker, args=(i, trackers[i], frame, new_bboxes))
+                    processes.append(p)
+                    p.start()
+                else:
+                    for p in processes:
+                        p.join()
+                    processes = []
+            for p in processes:
+                p.join()
+            processes = []
+
             untracked_ids = []
-            for i, (tracker, bbox_id) in enumerate(zip(trackers, bbox_ids)):
-                success, bbox = tracker.update(frame)
+            for i, bbox_id in range(bbox_ids):
+                bbox = new_bboxes[i]
                 bbox = [bbox[0], bbox[1], bbox[2] + bbox[0], bbox[3] + bbox[1]]
                 if success and verify_bbox(roi, bbox, tracked_bboxes[i], args.dist_thresh, args.time_thresh, bbox_id):
                     tracked_bboxes[i].append(np.array(bbox))
