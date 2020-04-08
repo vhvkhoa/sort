@@ -161,7 +161,7 @@ def main(args):
             # Remove bboxes that cannot be tracked or exists over a threshold
             # manager = multiprocessing.Manager()
             # new_bboxes = manager.dict()
-            new_bboxes = []
+            new_bboxes = [None for _ in range(len(trackers))]
             for i in range(len(trackers)):
                 update_tracker(i, trackers[i], frame, new_bboxes)
                 '''
