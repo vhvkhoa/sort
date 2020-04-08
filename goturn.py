@@ -107,7 +107,7 @@ def verify_bbox(roi, bbox, old_bboxes=None, dist_thresh=None, time_thresh=None, 
 
 
 def update_tracker(idx, tracker, frame, bbox_list):
-    bbox_list[idx] = tracker.update(frame)
+    bbox_list[idx] = tracker.update(frame)[1]
 
 
 def main(args):
