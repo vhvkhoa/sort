@@ -159,10 +159,13 @@ def main(args):
             ]
 
             # Remove bboxes that cannot be tracked or exists over a threshold
-            manager = multiprocessing.Manager()
-            new_bboxes = manager.dict()
+            # manager = multiprocessing.Manager()
+            # new_bboxes = manager.dict()
+            new_bboxes = []
             for i in range(len(trackers)):
-                # success, bbox = update_tracker(tracker, frame)
+                success, bbox = update_tracker(tracker, frame)
+                new_bboxes.append(bbox)
+                '''
                 if len(processes) < num_cpus:
                     p = multiprocessing.Process(target=update_tracker, args=(i, trackers[i], frame, new_bboxes))
                     processes.append(p)
@@ -174,6 +177,7 @@ def main(args):
             for p in processes:
                 p.join()
             processes = []
+            '''
 
             untracked_ids = []
             for i, bbox_id in enumerate(bbox_ids):
