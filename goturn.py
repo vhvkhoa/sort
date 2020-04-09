@@ -123,6 +123,7 @@ def main(args):
         roi = np.load(path.join(args.input_roi_dir, cam_name + '.npy'))
 
         input_video = cv2.VideoCapture(input_video_path)
+        print(input_video.get(cv2.CAP_PROP_FPS))
         width = int(input_video.get(cv2.CAP_PROP_FRAME_WIDTH))
         height = int(input_video.get(cv2.CAP_PROP_FRAME_HEIGHT))
         output_video = cv2.VideoWriter(
